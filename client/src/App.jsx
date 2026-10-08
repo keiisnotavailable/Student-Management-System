@@ -10,10 +10,14 @@ function App() {
   const [age, setAge] = useState("");
   const [editingId, setEditingId] = useState(null);
 
-  useEffect(() => {
+  const fetchStudents = () => {
     axios.get(`${API_URL}/students`).then((response) => {
       setStudents(response.data);
     });
+  };
+
+  useEffect(() => {
+    fetchStudents();
   }, []);
 
   const handleAddStudent = (e) => {
@@ -41,37 +45,45 @@ function App() {
   };
 
   const handleEditClick = (student) => {
-  setEditingId(student._id);
-  setName(student.name);
-  setCourse(student.course);
-  setAge(student.age);
-};
+    setEditingId(student._id);
+    setName(student.name);
+    setCourse(student.course);
+    setAge(student.age);
+  };
+
+  const resetForm = () => {
+    setName("");
+    setCourse("");
+    setAge("");
+    setEditingId(null);
+  };
+
   const handleSubmit = (e) => {
-  e.preventDefault();
- 
-  if (editingId) {
-    // UPDATE
-    axios
-      .put(`${API_URL}/students/${editingId}`, { name, course, age: Number(age) })
-      .then(() => {
-        setEditingId(null);
-        setName("");
-        setCourse("");
-        setAge("");
-        fetchStudents();
-      });
-  } else {
-    // CREATE
-    handleAddStudent(e);
-  }
-};
+    e.preventDefault();
+
+    if (editingId) {
+      axios
+        .put(`${API_URL}/students/${editingId}`, {
+          name,
+          course,
+          age: Number(age),
+        })
+        .then(() => {
+          resetForm();
+          fetchStudents();
+        })
+        .catch((err) => console.error(err));
+    } else {
+      handleAddStudent(e);
+    }
+  };
 
   return (
     <div>
       <h1>Student Management System</h1>
       <h2>Students</h2>
 
-      <form onSubmit={handleAddStudent}>
+      <form onSubmit={handleSubmit}>
         <input
           type="text"
           value={name}
@@ -99,7 +111,14 @@ function App() {
         />
         <br />
         <br />
-        <button type="submit">Add Student</button>
+        <button type="submit">
+          {editingId ? "Update Student" : "Add Student"}
+        </button>
+        {editingId && (
+          <button type="button" onClick={resetForm}>
+            Cancel
+          </button>
+        )}
       </form>
 
       <br />
