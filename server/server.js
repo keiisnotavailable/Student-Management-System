@@ -43,3 +43,12 @@ app.post("/students", async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 });
+
+app.get("/students", async (req, res) => {
+  try {
+    const students = await Student.find();
+    res.json(students);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
