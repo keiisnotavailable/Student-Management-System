@@ -23,10 +23,6 @@ app.get("/", (req, res) => {
     res.send("Server is running!");
 });
 
-app.listen(5000, () => {
-    console.log("Server running on port 5000");
-});
-
 app.get("/students", async (req, res) => {
     const students = await Student.find();
 
@@ -77,4 +73,13 @@ app.put("/students/:id", async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 });
+
+if (require.main === module) {
+  const port = process.env.PORT || 5000;
+  app.listen(port, "0.0.0.0", () => {
+    console.log(`Server running on port ${port}`);
+  });
+}
+
+module.exports = app;
  

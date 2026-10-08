@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 
+const API_URL = import.meta.env.VITE_API_URL || "/api";
+
 function App() {
   const [students, setStudents] = useState([]);
   const [name, setName] = useState("");
@@ -9,7 +11,7 @@ function App() {
   const [editingId, setEditingId] = useState(null);
 
   useEffect(() => {
-    axios.get("http://localhost:5000/students").then((response) => {
+    axios.get(`${API_URL}/students`).then((response) => {
       setStudents(response.data);
     });
   }, []);
@@ -17,7 +19,7 @@ function App() {
   const handleAddStudent = (e) => {
     e.preventDefault();
     axios
-      .post("http://localhost:5000/students", {
+      .post(`${API_URL}/students`, {
         name,
         course,
         age: Number(age),
@@ -33,7 +35,7 @@ function App() {
 
   const handleDelete = (id) => {
     axios
-      .delete(`http://localhost:5000/students/${id}`)
+      .delete(`${API_URL}/students/${id}`)
       .then(() => fetchStudents()) // Re-fetch updated list
       .catch((err) => console.error(err));
   };
@@ -50,7 +52,7 @@ function App() {
   if (editingId) {
     // UPDATE
     axios
-      .put(`http://localhost:5000/students/${editingId}`, { name, course, age: Number(age) })
+      .put(`${API_URL}/students/${editingId}`, { name, course, age: Number(age) })
       .then(() => {
         setEditingId(null);
         setName("");
