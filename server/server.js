@@ -7,12 +7,17 @@ require("dotenv").config();
 
 const app = express();
 const apiRouter = express.Router();
+const mongoUri = process.env.MONGODB_URI || process.env.MONGO_URI;
 
 app.use(cors());
 app.use(express.json());
 
+if (!mongoUri) {
+  throw new Error("MONGODB_URI is not configured");
+}
+
 mongoose
-.connect(process.env.MONGO_URI)
+.connect(mongoUri)
 .then(() => {
     console.log("Connected to MongoDB");
 })
