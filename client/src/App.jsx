@@ -30,6 +30,13 @@ function App() {
       .catch((err) => console.error(err));
   };
 
+  const handleDelete = (id) => {
+  axios
+    .delete(`http://localhost:5000/students/${id}`)
+    .then(() => fetchStudents()) // Re-fetch updated list
+    .catch((err) => console.error(err));
+};
+
   return (
     <div>
       <h1>Student Management System</h1>
@@ -43,6 +50,8 @@ function App() {
           placeholder="Name"
           required
         />
+        <br/>
+        <br/>
         <input
           type="text"
           value={course}
@@ -50,6 +59,8 @@ function App() {
           placeholder="Course"
           required
         />
+        <br/>
+        <br/>
         <input
           type="number"
           value={age}
@@ -57,14 +68,17 @@ function App() {
           placeholder="Age"
           required
         />
+        <br/>
+        <br/>
         <button type="submit">Add Student</button>
       </form>
+
+      <br/>
 
       <h2>Students</h2>
       {students.map((student) => (
         <div
           key={student._id}
-          style={{ border: "1px solid #ccc", margin: "10px", padding: "10px" }}
         >
           <p>
             <strong>Name:</strong> {student.name}
@@ -75,6 +89,7 @@ function App() {
           <p>
             <strong>Age:</strong> {student.age}
           </p>
+          <button onClick={() => handleDelete(student._id)}>Delete</button>
         </div>
       ))}
     </div>

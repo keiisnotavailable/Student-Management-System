@@ -52,3 +52,13 @@ app.get("/students", async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
+
+app.delete("/students/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    await Student.findByIdAndDelete(id);
+    res.json({ message: "Student deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
