@@ -6,7 +6,6 @@ const Student = require("./models/Student");
 require("dotenv").config();
 
 const app = express();
-const apiRouter = express.Router();
 const mongoUri = process.env.MONGODB_URI || process.env.MONGO_URI;
 
 app.use(cors());
@@ -29,7 +28,7 @@ app.get("/", (req, res) => {
     res.send("Server is running!");
 });
 
-apiRouter.post("/students", async (req, res) => {
+app.post(["/students", "/api/students"], async (req, res) => {
   try {
     const { name, course, age } = req.body;
     const newStudent = new Student({ name, course, age });
@@ -40,7 +39,7 @@ apiRouter.post("/students", async (req, res) => {
   }
 });
 
-apiRouter.get("/students", async (req, res) => {
+app.get(["/students", "/api/students"], async (req, res) => {
   try {
     const students = await Student.find();
     res.json(students);
@@ -49,7 +48,7 @@ apiRouter.get("/students", async (req, res) => {
   }
 });
 
-apiRouter.delete("/students/:id", async (req, res) => {
+app.delete(["/students/:id", "/api/students/:id"], async (req, res) => {
   try {
     const { id } = req.params;
     await Student.findByIdAndDelete(id);
@@ -59,7 +58,7 @@ apiRouter.delete("/students/:id", async (req, res) => {
   }
 });
 
-apiRouter.put("/students/:id", async (req, res) => {
+app.put(["/students/:id", "/api/students/:id"], async (req, res) => {
   try {
     const { id } = req.params;
     const { name, course, age } = req.body;
@@ -73,8 +72,6 @@ apiRouter.put("/students/:id", async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 });
-
-app.use(["/", "/api"], apiRouter);
 
 if (require.main === module) {
   const port = process.env.PORT || 5000;
