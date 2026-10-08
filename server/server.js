@@ -23,42 +23,54 @@ app.get("/", (req, res) => {
     res.send("Server is running!");
 });
 
-app.listen(5000, () => {
-    console.log("Server running on port 5000");
-});
-
 app.get("/students", async (req, res) => {
-    const students = await Student.find();
-
-    res.json(students);
+    try{
+        const students = await Student.find();
+        res.json(students);
+    } catch (error) {
+        console.error("Error fetching students", error);
+        res.status(500).json({ error: "Internal server error" });
+    }
 });
 
-app.post("/students", async (req, res) => {
-  try {
-    const { name, course, age } = req.body;
-    const newStudent = new Student({ name, course, age });
-    await newStudent.save();
-    res.status(201).json(newStudent);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
+app.post("/students", async(req, res) => {
+    try {
+        const {name, course, age} = req.body;
+        const newStudent = new Student({name, course, age});
+        await newStudent.save();
+
+        res.status(201).json(newStudent);
+    }catch (error) {
+        res.status(500).json({ error: "Internal server error" });
+    }
 });
 
-app.get("/students", async (req, res) => {
-  try {
-    const students = await Student.find();
-    res.json(students);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
+app.put("/students/:id", async (req, res) => {
+    try {
+        const {id} = req.params;
+        const {name, course, age} = req.body;
+
+        const updatedStudent = await Student.findByIdAndUpdate(
+            id,
+            {name, course, age},
+            {new: true}
+        );
+        res.json(updatedStudent);
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
 });
 
 app.delete("/students/:id", async (req, res) => {
-  try {
-    const { id } = req.params;
-    await Student.findByIdAndDelete(id);
-    res.json({ message: "Student deleted successfully" });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
+    try {
+        const {id} = req.params;
+        await Student.findByIdAndDelete(id);
+        res.json({ message: "Student deleted successfully" });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+app.listen(5000, () => {
+    console.log("Server running on port 5000");
 });
