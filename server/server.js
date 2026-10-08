@@ -32,3 +32,14 @@ app.get("/students", async (req, res) => {
 
     res.json(students);
 });
+
+app.post("/students", async (req, res) => {
+  try {
+    const { name, course, age } = req.body;
+    const newStudent = new Student({ name, course, age });
+    await newStudent.save();
+    res.status(201).json(newStudent);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+});
